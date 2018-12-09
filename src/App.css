@@ -1,32 +1,26 @@
-.App {
-  text-align: center;
-}
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-}
+div.background{  position: absolute;    width: 90%;    z-index: -1;    height: 100%;    right: -10%;}
+div.background2 {  position: absolute;    width: 90%;    z-index: -1;    height: 100%;    left: 6%;}
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
+div.background:before {    content: '';    position: fixed;    top: 0;    right: 0;    width: 80%;    height: 70%;    /* opacity: 0.8; */    background-color: #3f51b4;    border-bottom: 30px solid #2196F3;    -webkit-transform-origin: 100% 100%;    -ms-transform-origin: 100% 100%;    transform-origin: 100% 100%;    -webkit-transform: skewX(30deg);    -ms-transform: skewX(30deg);    transform: skewY(30deg);    -webkit-box-sizing: border-box;    -moz-box-sizing: border-box;    box-shadow: 0px 0px 20px #89898a;}
 
-.App-link {
-  color: #61dafb;
-}
+div.background2:before {    content: '';    position: fixed;    bottom: 0;    left: 0;    width: 50%;    height: 100%;     background-color: #3f51b4;    border-right: 50px solid #2196F3;    -webkit-transform-origin: 100% 100%;    -ms-transform-origin: 100% 100%;    transform-origin: 100% 100%;    -webkit-transform: skewX(60deg);    -ms-transform: skewX(60deg);        transform: skewX(60deg);    -webkit-box-sizing: border-box;    -moz-box-sizing: border-box;    box-shadow: 0px 0px 20px #89898a;}
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+@media screen and (max-width: 860px){
+	div.background{ margin-top: -10%; }
+}
+@media screen and (max-width: 560px){
+	div.background{ margin-top: -50%; }
+}
+@media screen and (max-width: 460px){
+	.loginForm{ width: 100%; max-width: 420px; }
+	div.background{ margin-top: -60%; }
+	div.background2{ margin-top: -10%; }
+	div.background2:before{ width: 80%; }
+	form, .powered { opacity: 0.8; }
+}
+@media screen and (max-width: 380px){
+	div.background{ margin-top: -80%; }
+	div.background2{ margin-top: -10%; }
+	div.background2:before{ width: 100%; }
 }
