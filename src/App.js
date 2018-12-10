@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import ApolloClient from "apollo-boost";
 import { ApolloProvider, Query } from "react-apollo";
 import gql from "graphql-tag";
-import HomePage from "./views/Home";
 
+import HomePage from "./views/Home";
 import "./App.css";
 
 const client = new ApolloClient({
@@ -25,7 +25,9 @@ class App extends Component {
     return (
       <ApolloProvider client={client}>
         <div className="App">
-          <HomePage />
+          <header className="App-header">
+            <HomePage />
+          </header>
         </div>
       </ApolloProvider>
     );

@@ -31,7 +31,7 @@ import CardAvatar from "components/Card/CardAvatar.jsx";
 import dashboardStyle from "assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
 
 const Header = props => {
-  const { classes } = props;
+  const { classes, name, avatar } = props;
 
   return (
     <GridContainer>
@@ -43,7 +43,7 @@ const Header = props => {
             </a>
           </CardAvatar>
           <CardBody profile>
-            <h6 className={classes.cardCategory}>CEO / CO-FOUNDER</h6>
+            <h1 className={classes.cardCategory}>{name}</h1>
             <h4 className={classes.cardTitle}>Alec Thompson</h4>
           </CardBody>
         </Card>

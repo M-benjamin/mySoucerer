@@ -8,19 +8,23 @@ import Overview from "../../components/Overview/Overview";
 import Languages from "../../components/Langages/Languages";
 import Repositories from "../../components/Repositories/Repositories";
 import { GET_ALL_DATA_GIHUB } from "../../queries";
+import Loader from "components/Loader/Loader";
 
 const HomePage = () => (
   <Query query={GET_ALL_DATA_GIHUB}>
     {({ loading, error, data }) => {
       if (loading) {
-        return <span>WAIT</span>;
+        return (
+          <div className="load">
+            <Loader />
+          </div>
+        );
       }
       return (
         <div className="App">
-          <h1>{data.user.name}</h1>
           <div className="background" />
           <div className="background2">
-            <Header />
+            <Header name={data.user.name} avatar={data.user.avatarUrl} />
             <Stat />
             <Overview />
             <Languages />

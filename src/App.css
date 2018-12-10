@@ -24,3 +24,7 @@ div.background2:before {    content: '';    position: fixed;    bottom: 0;    le
 	div.background2{ margin-top: -10%; }
 	div.background2:before{ width: 100%; }
 }
+
+.load {
+	text-align: center;
+}
