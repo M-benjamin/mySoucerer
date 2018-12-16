@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import ApolloClient from "apollo-boost";
-import { ApolloProvider, Query } from "react-apollo";
-import gql from "graphql-tag";
+import { ApolloProvider } from "react-apollo";
 
 import HomePage from "./views/Home";
 import "./App.css";

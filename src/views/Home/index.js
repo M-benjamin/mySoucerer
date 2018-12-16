@@ -1,7 +1,5 @@
-import React, { Component } from "react";
-import ApolloClient from "apollo-boost";
-import { ApolloProvider, Query } from "react-apollo";
-
+import React from "react";
+import { Query } from "react-apollo";
 import Header from "../../components/Header/Header";
 import Stat from "../../components/Stat/Stat";
 import Overview from "../../components/Overview/Overview";
@@ -25,9 +23,9 @@ const HomePage = () => (
           <div className="background" />
           <div className="background2">
             <Header name={data.user.name} avatar={data.user.avatarUrl} />
-            <Stat />
+            <Stat user={data.user} />
             <Overview />
-            <Languages />
+            <Languages languages={data.user.repositories} />
             <Repositories />
           </div>
         </div>
