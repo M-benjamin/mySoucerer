@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { Pie } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 
-class PieChart extends Component {
+class LineChart extends Component {
   state = {
     chartData: this.props.data
   };
@@ -15,19 +15,15 @@ class PieChart extends Component {
   render() {
     return (
       <div>
-        <Pie
+        <Line
           data={this.state.chartData}
           width={100}
-          height={100}
+          height={50}
           option={{
             title: {
               display: this.props.displayTitle,
               text: "Largest Cities In " + this.props.location,
               fontSize: 25
-            },
-            legend: {
-              display: this.props.displayLegend,
-              position: this.props.legendPosition
             }
           }}
         />
@@ -36,4 +32,4 @@ class PieChart extends Component {
   }
 }
 
-export default PieChart;
+export default LineChart;

@@ -8,30 +8,41 @@ import Repositories from "../../components/Repositories/Repositories";
 import { GET_ALL_DATA_GIHUB } from "../../queries";
 import Loader from "components/Loader/Loader";
 
-const HomePage = () => (
-  <Query query={GET_ALL_DATA_GIHUB}>
-    {({ loading, error, data }) => {
-      if (loading) {
+const HomePage = () => {
+  const variables = {
+    login: "M-benjamin",
+    totalRepos: 35
+  };
+
+  return (
+    <Query
+      query={GET_ALL_DATA_GIHUB}
+      fetchPolicy="cache-and-network"
+      variables={variables}
+    >
+      {({ loading, error, data }) => {
+        if (loading) {
+          return (
+            <div className="load">
+              <Loader />
+            </div>
+          );
+        }
         return (
-          <div className="load">
-            <Loader />
+          <div className="App">
+            <div className="background" />
+            <div className="background2">
+              <Header name={data.user.name} avatar={data.user.avatarUrl} />
+              <Stat data={data.user} />
+              <Overview data={data.user.repositories} />
+              <Languages languages={data.user.repositories} />
+              <Repositories />
+            </div>
           </div>
         );
-      }
-      return (
-        <div className="App">
-          <div className="background" />
-          <div className="background2">
-            <Header name={data.user.name} avatar={data.user.avatarUrl} />
-            <Stat user={data.user} />
-            <Overview />
-            <Languages languages={data.user.repositories} />
-            <Repositories />
-          </div>
-        </div>
-      );
-    }}
-  </Query>
-);
+      }}
+    </Query>
+  );
+};
 
 export default HomePage;

@@ -1,40 +1,32 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-// react plugin for creating charts
-// import ChartistGraph from "react-chartist";
-// @material-ui/core
 import withStyles from "@material-ui/core/styles/withStyles";
-
-// @material-ui/icons
-import Store from "@material-ui/icons/Store";
-import Accessibility from "@material-ui/icons/Accessibility";
 
 // core components
 import GridItem from "components/Grid/GridItem.jsx";
 import GridContainer from "components/Grid/GridContainer.jsx";
-// import Table from "components/Table/Table.jsx";
 import Card from "components/Card/Card.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
-import CardIcon from "components/Card/CardIcon.jsx";
+
 import CardFooter from "components/Card/CardFooter.jsx";
+import generateData from "../../libs/utils";
 
 import dashboardStyle from "assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
 
 class Stat extends Component {
-  state = {
-    totalCommits: null
-  };
-
-  totalCommitsHandler = () => {};
-
   render() {
-    const { classes, user } = this.props;
-    let countCommit = 0;
+    const { classes, data } = this.props;
+    let { result } = generateData(data.repositories.nodes);
+    let totalCommit = 0;
+    let totalLineOfCode = 0;
+    let repos = data.repositories.totalCount;
+    let followers = data.followers.totalCount;
+    let following = data.following.totalCount;
 
-    user.repositories.nodes.forEach(element => {
-      if (element.defaultBranchRef != null) {
-        console.log(element.defaultBranchRef.target.history.totalCount);
-        countCommit += element.defaultBranchRef.target.history.totalCount;
+    result.forEach(res => {
+      if (res != null) {
+        totalCommit += res.commit;
+        totalLineOfCode += res.codes;
       }
     });
 
@@ -42,79 +34,46 @@ class Stat extends Component {
       <GridContainer>
         <GridItem xs={12} sm={6} md={2}>
           <Card>
-            <CardHeader color="warning" stats icon>
-              <CardIcon color="warning">
-                <Store />
-              </CardIcon>
-            </CardHeader>
+            <CardHeader color="warning" stats icon />
             <CardFooter stats>
-              <p className={classes.cardCategory}>Fixed Issues</p>
-              <h3 className={classes.cardTitle}>75</h3>
+              <p className={classes.cardCategory}>Commits</p>
+              <h3 className={classes.cardTitle}>{totalCommit}</h3>
             </CardFooter>
           </Card>
         </GridItem>
         <GridItem xs={12} sm={6} md={2}>
           <Card>
-            <CardHeader color="warning" stats icon>
-              <CardIcon color="warning">
-                <Store />
-              </CardIcon>
-            </CardHeader>
+            <CardHeader color="primary" stats icon />
             <CardFooter stats>
-              <p className={classes.cardCategory}>Fixed Issues</p>
-              <h3 className={classes.cardTitle}>75</h3>
+              <p className={classes.cardCategory}>Repos</p>
+              <h3 className={classes.cardTitle}>{repos}</h3>
+            </CardFooter>
+          </Card>
+        </GridItem>
+        <GridItem xs={12} sm={6} md={3}>
+          <Card>
+            <CardHeader color="success" stats icon />
+            <CardFooter stats>
+              <p className={classes.cardCategory}>Lines of code</p>
+              <h3 className={classes.cardTitle}>{totalLineOfCode}</h3>
             </CardFooter>
           </Card>
         </GridItem>
         <GridItem xs={12} sm={6} md={2}>
           <Card>
-            <CardHeader color="success" stats icon>
-              <CardIcon color="success">
-                <Store />
-              </CardIcon>
-            </CardHeader>
+            <CardHeader color="danger" stats icon />
             <CardFooter stats>
-              <p className={classes.cardCategory}>Fixed Issues</p>
-              <h3 className={classes.cardTitle}>{countCommit}</h3>
+              <p className={classes.cardCategory}>Followers</p>
+              <h3 className={classes.cardTitle}>{followers}</h3>
             </CardFooter>
           </Card>
         </GridItem>
         <GridItem xs={12} sm={6} md={2}>
           <Card>
-            <CardHeader color="danger" stats icon>
-              <CardIcon color="danger">
-                <Store />
-              </CardIcon>
-            </CardHeader>
+            <CardHeader color="info" stats icon />
             <CardFooter stats>
-              <p className={classes.cardCategory}>Fixed Issues</p>
-              <h3 className={classes.cardTitle}>75</h3>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={2}>
-          <Card>
-            <CardHeader color="info" stats icon>
-              <CardIcon color="info">
-                <Accessibility />
-              </CardIcon>
-            </CardHeader>
-            <CardFooter stats>
-              <p className={classes.cardCategory}>Fixed Issues</p>
-              <h3 className={classes.cardTitle}>75</h3>
-            </CardFooter>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={6} md={2}>
-          <Card>
-            <CardHeader color="info" stats icon>
-              <CardIcon color="info">
-                <Accessibility />
-              </CardIcon>
-            </CardHeader>
-            <CardFooter stats>
-              <p className={classes.cardCategory}>Fixed Issues</p>
-              <h3 className={classes.cardTitle}>75</h3>
+              <p className={classes.cardCategory}>Following</p>
+              <h3 className={classes.cardTitle}>{following}</h3>
             </CardFooter>
           </Card>
         </GridItem>

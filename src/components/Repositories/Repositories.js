@@ -1,11 +1,8 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
-// react plugin for creating charts
-// import ChartistGraph from "react-chartist";
-// @material-ui/core
+import { Query } from "react-apollo";
+import { Panel, PanelGroup, Button, Badge } from "react-bootstrap";
 import withStyles from "@material-ui/core/styles/withStyles";
-import ArrowUpward from "@material-ui/icons/ArrowUpward";
-import AccessTime from "@material-ui/icons/AccessTime";
 
 // core components
 import GridItem from "components/Grid/GridItem.jsx";
@@ -16,138 +13,165 @@ import CardBody from "components/Card/CardBody.jsx";
 import CardFooter from "components/Card/CardFooter.jsx";
 
 import dashboardStyle from "assets/jss/material-dashboard-react/views/dashboardStyle.jsx";
-// require("bootstrap-material-design");
+import { GET_ALL_REPO_PAGINATION_GIHUB } from "../../queries";
+import Loader from "components/Loader/Loader";
 
-const Repositories = props => {
-  const { classes } = props;
+const LIMIT_OF_ROW = 5;
+class Repositories extends Component {
+  state = {
+    hasNext: true
+  };
 
-  return (
-    <GridContainer>
-      <GridItem xs={12} sm={12} md={12}>
-        <Card chart>
-          <CardHeader color="success">
-            <h1 className={classes.cardTitleWhite}>Repositories</h1>
-          </CardHeader>
-          <CardBody>
-            <div id="accordion">
-              <div className="card">
-                <div className="card-header" id="headingOne">
-                  <h5 className="mb-0">
-                    <button
-                      className="btn btn-link"
-                      data-toggle="collapse"
-                      data-target="#collapseOne"
-                      aria-expanded="true"
-                      aria-controls="collapseOne"
-                    >
-                      Collapsible Group Item #1
-                    </button>
-                  </h5>
-                </div>
+  render() {
+    const { classes } = this.props;
 
-                <div
-                  id="collapseOne"
-                  className="collapse show"
-                  aria-labelledby="headingOne"
-                  data-parent="#accordion"
-                >
-                  <div className="card-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life
-                    accusamus terry richardson ad squid. 3 wolf moon officia
-                    aute, non cupidatat skateboard dolor brunch. Food truck
-                    quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,
-                    sunt aliqua put a bird on it squid single-origin coffee
-                    nulla assumenda shoreditch et. Nihil anim keffiyeh
-                    helvetica, craft beer labore wes anderson cred nesciunt
-                    sapiente ea proident. Ad vegan excepteur butcher vice lomo.
-                    Leggings occaecat craft beer farm-to-table, raw denim
-                    aesthetic synth nesciunt you probably haven't heard of them
-                    accusamus labore sustainable VHS.
-                  </div>
-                </div>
+    const variables = {
+      login: "M-benjamin",
+      cursor: null,
+      prev: null,
+      limit: LIMIT_OF_ROW
+    };
+
+    return (
+      <Query
+        query={GET_ALL_REPO_PAGINATION_GIHUB}
+        fetchPolicy="cache-and-network"
+        variables={variables}
+      >
+        {({ loading, error, data: { user }, fetchMore }) => {
+          if (loading) {
+            return (
+              <div className="load">
+                <Loader />
               </div>
-              <div className="card">
-                <div className="card-header" id="headingTwo">
-                  <h5 className="mb-0">
-                    <button
-                      className="btn btn-link collapsed"
-                      data-toggle="collapse"
-                      data-target="#collapseTwo"
-                      aria-expanded="false"
-                      aria-controls="collapseTwo"
+            );
+          }
+
+          const { pageInfo, nodes } = user.repositories;
+
+          return (
+            <GridContainer>
+              <GridItem xs={12} sm={12} md={12}>
+                <Card chart>
+                  <CardHeader color="success">
+                    <h1 className={classes.cardTitleWhite}>Repositories</h1>
+                  </CardHeader>
+                  <CardBody>
+                    <PanelGroup accordion id="accordion-example">
+                      {nodes.map((repo, index) => {
+                        return (
+                          <Panel key={index} eventKey={index}>
+                            <Panel.Heading>
+                              <Panel.Title toggle>{repo.name}</Panel.Title>
+                            </Panel.Heading>
+
+                            <Panel.Body collapsible>
+                              <h6>
+                                Commits:
+                                {
+                                  repo.defaultBranchRef.target.history
+                                    .totalCount
+                                }
+                              </h6>
+                              <hr />
+                              <h6>
+                                Primary Language: {repo.primaryLanguage.name}
+                              </h6>
+                              <hr />
+                              <h6>Languages: </h6>
+                              {repo.languages.nodes.map((lang, index) => {
+                                const colorBabge = {
+                                  backgroundColor: lang.color
+                                };
+                                return (
+                                  <Card
+                                    key={index}
+                                    style={{ width: "100px", padding: "5px" }}
+                                  >
+                                    <h6>{lang.name}</h6>
+                                    <Badge style={colorBabge} />
+                                  </Card>
+                                );
+                              })}
+                              <hr />
+                              <h6>Collaborators: </h6>
+                              {repo.collaborators.nodes.map((col, index) => {
+                                return (
+                                  <Card
+                                    key={index}
+                                    style={{ width: "150px", padding: "5px" }}
+                                  >
+                                    <h6>{col.name}</h6>
+                                  </Card>
+                                );
+                              })}
+                            </Panel.Body>
+                          </Panel>
+                        );
+                      })}
+                    </PanelGroup>
+                    <Button
+                      onClick={() => {
+                        if (pageInfo.hasNextPage) {
+                          fetchMore({
+                            variables: {
+                              cursor: pageInfo.endCursor
+                            },
+                            updateQuery: (prev, { fetchMoreResult }) => {
+                              if (!fetchMoreResult) {
+                                return prev;
+                              }
+
+                              return {
+                                ...prev,
+                                user: {
+                                  ...prev.user,
+                                  repositories: {
+                                    ...prev.user.repositories,
+                                    ...fetchMoreResult.user.repositories,
+                                    nodes: [
+                                      ...prev.user.repositories.nodes,
+                                      ...fetchMoreResult.user.repositories.nodes
+                                    ]
+                                  }
+                                }
+                              };
+                            }
+                          });
+                        }
+                      }}
                     >
-                      Collapsible Group Item #2
-                    </button>
-                  </h5>
-                </div>
-                <div
-                  id="collapseTwo"
-                  className="collapse"
-                  aria-labelledby="headingTwo"
-                  data-parent="#accordion"
-                >
-                  <div className="card-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life
-                    accusamus terry richardson ad squid. 3 wolf moon officia
-                    aute, non cupidatat skateboard dolor brunch. Food truck
-                    quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,
-                    sunt aliqua put a bird on it squid single-origin coffee
-                    nulla assumenda shoreditch et. Nihil anim keffiyeh
-                    helvetica, craft beer labore wes anderson cred nesciunt
-                    sapiente ea proident. Ad vegan excepteur butcher vice lomo.
-                    Leggings occaecat craft beer farm-to-table, raw denim
-                    aesthetic synth nesciunt you probably haven't heard of them
-                    accusamus labore sustainable VHS.
-                  </div>
-                </div>
-              </div>
-              <div className="card">
-                <div className="card-header" id="headingThree">
-                  <h5 className="mb-0">
-                    <button
-                      className="btn btn-link collapsed"
-                      data-toggle="collapse"
-                      data-target="#collapseThree"
-                      aria-expanded="false"
-                      aria-controls="collapseThree"
+                      Load more
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (pageInfo.hasPreviousPage) {
+                          fetchMore({
+                            variables: {
+                              prev: pageInfo.startCursor
+                            },
+                            updateQuery: (prev, { fetchMoreResult }) => {
+                              return Object.assign({}, prev, {
+                                user: { ...fetchMoreResult.user }
+                              });
+                            }
+                          });
+                        }
+                      }}
                     >
-                      Collapsible Group Item #3
-                    </button>
-                  </h5>
-                </div>
-                <div
-                  id="collapseThree"
-                  className="collapse"
-                  aria-labelledby="headingThree"
-                  data-parent="#accordion"
-                >
-                  <div className="card-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life
-                    accusamus terry richardson ad squid. 3 wolf moon officia
-                    aute, non cupidatat skateboard dolor brunch. Food truck
-                    quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor,
-                    sunt aliqua put a bird on it squid single-origin coffee
-                    nulla assumenda shoreditch et. Nihil anim keffiyeh
-                    helvetica, craft beer labore wes anderson cred nesciunt
-                    sapiente ea proident. Ad vegan excepteur butcher vice lomo.
-                    Leggings occaecat craft beer farm-to-table, raw denim
-                    aesthetic synth nesciunt you probably haven't heard of them
-                    accusamus labore sustainable VHS.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardBody>
-          <CardFooter chart>
-            <div className={classes.stats}>
-              <AccessTime /> updated 4 minutes ago
-            </div>
-          </CardFooter>
-        </Card>
-      </GridItem>
-    </GridContainer>
-  );
-};
+                      Hide
+                    </Button>
+                  </CardBody>
+                  <CardFooter chart />
+                </Card>
+              </GridItem>
+            </GridContainer>
+          );
+        }}
+      </Query>
+    );
+  }
+}
 
 Repositories.propTypes = {
   classes: PropTypes.object.isRequired

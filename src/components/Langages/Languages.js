@@ -8,6 +8,7 @@ import GridContainer from "components/Grid/GridContainer.jsx";
 import Card from "components/Card/Card.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
 import CardBody from "components/Card/CardBody.jsx";
+import CardFooter from "components/Card/CardFooter.jsx";
 import Pie from "../Charts/Pie";
 import generateData from "../../libs/utils";
 
@@ -15,7 +16,8 @@ import dashboardStyle from "assets/jss/material-dashboard-react/views/dashboardS
 
 class Languages extends Component {
   state = {
-    chartData: {}
+    chartData: {},
+    data: null
   };
 
   componentWillMount() {
@@ -24,14 +26,13 @@ class Languages extends Component {
 
   getChartData() {
     const languages = this.props.languages;
-    const result = generateData(languages.nodes);
+    const { result } = generateData(languages.nodes);
 
     const label = [];
     const datas = [];
     const colors = [];
 
     result.forEach(val => {
-      console.log("val", val);
       label.push(val.name);
       datas.push(val.commit);
       colors.push(val.color);
@@ -47,12 +48,13 @@ class Languages extends Component {
             backgroundColor: colors
           }
         ]
-      }
+      },
+      data: result
     });
   }
 
   render() {
-    const { classes, languages } = this.props;
+    const { classes } = this.props;
 
     return (
       <GridContainer>
@@ -64,7 +66,26 @@ class Languages extends Component {
             <CardBody>
               <GridContainer>
                 <Grid item xs={12} sm={6}>
-                  <Pie data={this.state.chartData} />
+                  {this.state.data.map((res, index) => {
+                    return (
+                      <GridItem key={index} xs={12} sm={8}>
+                        <Card>
+                          <CardHeader color="warning" stats>
+                            <h1 style={{ fontSize: "15px" }}>{res.name}</h1>
+                          </CardHeader>
+                          <CardFooter stats>
+                            <p className={classes.cardCategory}>Commits</p>
+                            <h3 className={classes.cardTitle}>{res.commit}</h3>
+                          </CardFooter>
+                          <CardHeader color="warning" stats icon />
+                          <CardFooter stats>
+                            <p className={classes.cardCategory}>Codes</p>
+                            <h3 className={classes.cardTitle}>{res.codes}</h3>
+                          </CardFooter>
+                        </Card>
+                      </GridItem>
+                    );
+                  })}
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Pie data={this.state.chartData} />

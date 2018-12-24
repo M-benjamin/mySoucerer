@@ -27,7 +27,6 @@ const Header = props => {
           </CardAvatar>
           <CardBody profile>
             <h1 className={classes.cardCategory}>{name}</h1>
-            <h4 className={classes.cardTitle}>Alec Thompson</h4>
           </CardBody>
         </Card>
       </GridItem>
